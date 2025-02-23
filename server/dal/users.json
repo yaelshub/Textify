@@ -1,0 +1,32 @@
+[]
+import json
+
+# פונקציה שתבקש מהמשתמש להזין את המידע
+def get_user_data():
+    name = input("הכנס את שמך: ")
+    rollno = input("הכנס את מספר הרישום: ")
+    cgpa = input("הכנס את ה-CGPA שלך: ")
+    phonenumber = input("הכנס את מספר הטלפון שלך: ")
+
+    # יצירת מילון עם המידע שהוזן
+    user_data = {
+        "name": name,
+        "password": password,
+        "phoneNumber": float(phoneNumber),  # המרת ה-CGPA למספר עשרוני
+        "mail": mail
+    }
+
+    return user_data
+
+# פונקציה לכתיבה לקובץ JSON
+def write_to_json(data, filename):
+    with open(filename, "w") as outfile:
+        json.dump(data, outfile, indent=4)
+
+# קריאה לפונקציה לקבלת נתונים מהמשתמש
+user_data = get_user_data()
+
+# כתיבה לקובץ JSON
+write_to_json(user_data, "users.json")
+
+print("המידע נשמר בקובץ users.json")

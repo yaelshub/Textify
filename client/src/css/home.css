@@ -1,0 +1,42 @@
+/* css/home.css */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f8ff; /* Light pastel blue */
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+h1 {
+  color: #ffb6c1; /* Light pastel pink */
+}
+
+button {
+  background-color: #e6e6fa; /* Light pastel lavender */
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #d8bfd8; /* Thistle */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
