@@ -1,9 +1,9 @@
-/* css/home.css */
-
+css/home.css
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f8ff; /* Light pastel blue */
-  color: #333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9; /* Light grey */
+  text-align: center;
+  color: #444;
   margin: 0;
   padding: 0;
 }
@@ -11,32 +11,28 @@ body {
 .container {
   text-align: center;
   margin-top: 50px;
+  padding: 20px;
 }
 
 h1 {
-  color: #ffb6c1; /* Light pastel pink */
+  color: #ff69b4; /* Hot pink */
+  font-size: 2.5em;
+  margin-bottom: 20px;
 }
 
 button {
-  background-color: #e6e6fa; /* Light pastel lavender */
+  background-color: #ff69b4; /* Hot pink */
   border: none;
-  color: #333;
-  padding: 10px 20px;
+  color: #fff;
+  padding: 12px 24px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 18px;
   margin: 10px 5px;
   cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-button:hover {
-  background-color: #d8bfd8; /* Thistle */
-}
 
-a {
-  text-decoration: none;
-  color: inherit;
-}

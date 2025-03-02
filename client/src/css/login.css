@@ -1,0 +1,45 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #221b20;
+    background-image: linear-gradient(to bottom right, #ffb6c1, #ff69b4); /* Light pink to hot pink */
+}
+
+.h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #ff69b4; /* Hot pink */
+}
+
+.textField {
+    outline: none;
+    margin-bottom: 0.5cm; /* 1cm margin between fields */
+    background-color: #fdfdfd; /* Light fuchsia pink */
+    /* border: 1px solid #ff69b4;  */
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 16px;
+    width: 80%;
+    max-width: 400px; /* Ensures consistent width */
+}
+
+
+.button {
+    margin-top: 10px;
+    background-color: #ff69b4; /* Hot pink */
+    color: #fef8f8;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 24px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.button:hover {
+    background-color: #dd85b4; /* Deep pink */
+    transform: scale(1.05);
+}

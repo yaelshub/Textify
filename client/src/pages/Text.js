@@ -1,4 +1,6 @@
 import React, { useRef } from 'react';
+import "../css/Text.css";
+
 
 export default function Text() {
     const fileInputRef = useRef(null);
@@ -15,7 +17,6 @@ export default function Text() {
                 "application/msword", // .doc
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
             ];
-
             if (allowedTypes.includes(file.type)) {
                 alert(`You uploaded the file: ${file.name}`);
                 setTimeout(() => {
@@ -27,8 +28,7 @@ export default function Text() {
                         90% match with Mia Keenan's writing style.
                         Important to know: Stylometry can only offer a statistical probability of author identification, but cannot unequivocally determine the identity of the writer. The results are based on analytical patterns, and therefore should always be taken with limited certainty.`);
                 }, 3000);
-            } 
-            else {
+            } else {
                 alert("Please upload only one file Word (.doc, .docx) or PDF!");
                 fileInputRef.current.value = ""; // איפוס הבחירה
             }
