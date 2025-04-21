@@ -55,6 +55,8 @@ import sys
 from controlers.auth_controller import auth_bp
 from controlers.pdf_controller import pdf_bp
 from controlers.text_analysis_controller import text_analysis_bp
+from services.File_analysis.Extr import pdf_bp  # ייבוא ה־Blueprint
+
 
 
 
