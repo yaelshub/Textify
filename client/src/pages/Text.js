@@ -1,15 +1,16 @@
 import React, { useRef } from 'react';
+import axios from 'axios';
 import "../css/Text.css";
 
 
 export default function Text() {
     const fileInputRef = useRef(null);
-
+    const [tokens, setTokens] = React.useState(null); // משתנה לשמירת תוצאות הטוקניזציה 
     const handleUploadClick = () => {
         fileInputRef.current.click(); // פותח חלון לבחירת קובץ
     };
 
-    const handleFileChange = (event) => {
+    const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
             const allowedTypes = [
@@ -19,6 +20,10 @@ export default function Text() {
             ];
             if (allowedTypes.includes(file.type)) {
                 alert(`You uploaded the file: ${file.name}`);
+                const formData = new FormData();
+                formData.append("file", file);
+                const response=await axios.post ("http://127.0.0.1:5000/extract_text",formData)
+                console.log(response.data);
                 setTimeout(() => {
                     alert(`
                         Results of your text analysis:
@@ -51,7 +56,30 @@ export default function Text() {
                         onChange={handleFileChange}
                     />
                 </div>
+                {tokens && ( // הצגת התוצאות אם קיימות
+                    <div className="results">
+                        <h3>Tokenization Results:</h3>
+                        <div>
+                            <h4>Sentences:</h4>
+                            <ul>
+                                {tokens.sentences.map((sentence, index) => (
+                                    <li key={index}>{sentence}</li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>Words:</h4>
+                            <ul>
+                                {tokens.words.map((word, index) => (
+                                    <li key={index}>{word}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
 }
+
+

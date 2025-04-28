@@ -1,18 +1,9 @@
-import PyPDF2
-from flask import Blueprint, jsonify
+from PyPDF2 import PdfReader
+from services.File_analysis.tokenization import tokenize_text
 
-
-pdf_bp = Blueprint('pdf', __name__)
-
-@pdf_bp.route("/extract_text_from_pdf")
-def extract_text_from_pdf(file_path):
+def extract_text_from_pdf(file_stream):
+    reader = PdfReader(file_stream)
     text = ""
-    with open(file_path, 'rb') as file:
-        reader = PyPDF2.PdfReader(file)
-        for page in reader.pages:
-            text += page.extract_text()
+    for page in reader.pages:
+        text += page.extract_text()
     return text
-
-pdf_path = 'file:///D:/Textify/server/dal/textData/A-Little-Princess-By-Frances-Hodgson-Burnett-Retold-by-Jennifer-Bassett-Book-PDF.pdf'  # שימי את הנתיב של הקובץ שלך כאן
-extracted_text = extract_text_from_pdf(pdf_path)
-print(extracted_text)
