@@ -14,9 +14,7 @@ def register():
 
 	with open(USERS_FILE, "r") as file:
 		users = json.load(file)
-
 	users.append(data)
-
 	with open(USERS_FILE, "w") as file:
 		json.dump(users, file, indent=4)
 

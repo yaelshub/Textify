@@ -22,7 +22,7 @@ export default function Text() {
                 alert(`You uploaded the file: ${file.name}`);
                 const formData = new FormData();
                 formData.append("file", file);
-                const response=await axios.post ("http://127.0.0.1:5000/extract_text",formData)
+                const response=await axios.post ("http://127.0.0.1:5000/text/collect_data",formData)
                 console.log(response.data);
                 setTimeout(() => {
                     alert(`

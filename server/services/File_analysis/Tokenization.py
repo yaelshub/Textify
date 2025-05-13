@@ -2,28 +2,23 @@ import spacy
 
 tok=None
 def tokenize_text(text):
-    nlp = spacy.load("en_core_web_sm")
-    doc = nlp(text)
-    
-    words = [token.text for token in doc]
-    sentences = [sent.text for sent in doc.sents]
+    try:
+        nlp = spacy.load("en_core_web_sm")
+        doc = nlp(text)
 
-    print("Tokens (Words):")
-    for word in words:
-        print(word)
+        text = text.lower()
+        words = [token.text for token in doc]
+        sentences = [sent.text for sent in doc.sents]
 
-    print("\nSentences:")
-    for sentence in sentences:
-        print(sentence)
-        print()
+        print("Tokens (Words):")
 
-    tok = {"words": words, "sentences": sentences}
-    return tok
-
+        tok = {"words": words, "sentences": sentences}
+        print('tokenize_text: ')
+        return tok
+    except Exception as e:
+        print(f"---------Error in tokenization: {e}")
+        raise e
 
 
-# def collect_data(text):
-#     tiyug=func_get_tiuyg(text)
-#     ner=func_get_ner(text)
-#     return recognize_writer(tiyug,ner)
+
 
