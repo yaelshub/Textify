@@ -28,14 +28,14 @@ def get_author_line_counts(root_dir):
     return author_line_counts
 
 
-root_dir = 'dal\\textData'
+root_dir = r"D:\Textify\server\dal\textData"
 author_line_counts = get_author_line_counts(root_dir)
 
 df = pd.DataFrame(list(author_line_counts.items()), columns=['Author', 'Line Count'])
 
 plt.figure(figsize=(8, 8))
 plt.pie(df['Line Count'], labels=df['Author'], autopct='%1.1f%%', startangle=140, pctdistance=0.85)
-plt.title('Checking whether the data is balanced according to the number of lines in the text')
+plt.title('Balanced data',pad=5)
 plt.axis('equal') 
 plt.show()
 
