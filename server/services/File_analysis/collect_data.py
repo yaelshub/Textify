@@ -21,7 +21,6 @@ def word_info(text):
             "is_alpha": token.is_alpha,
             "is_stop": token.is_stop
         })
-        print("word info: ", results)
     return results
         
 def entity_identification(text):  
@@ -30,11 +29,10 @@ def entity_identification(text):
     for ent in doc.ents: 
         result.append({
             "text": ent.text,
-            "lemma": ent.start_char,
-            "pos": ent.end_char,
-            "tag": ent.label_
+            "start_char": ent.start_char,
+            "end_char": ent.end_char,
+            "label": ent.label_
         })
-    print("entity identification: ", result)
     return result
 
 #מספר המילים שבכל משפט
@@ -52,7 +50,13 @@ def calculate_average_word_count(words_per_sentence):
 
 #סטיית תקן של  כמות המילים במשפט
 def Standard_deviation_of_the_number_of_words_in_a_sentence(words_per_sentence):
-       return np.std(words_per_sentence)
+    if not words_per_sentence:
+        print("Warning: Empty list provided for words_per_sentence.")
+        return 0
+    if len(words_per_sentence) == 1:
+        print("Warning: Only one sentence, standard deviation is 0 by definition.")
+        return 0
+    return np.std(words_per_sentence)
 
 #מספר המילים בטקסט
 def number_of_words_per_text(tok):
@@ -71,11 +75,12 @@ def frequency_of_each_word(word_count,num_words):
     word_freq={}
     for word in word_count:
      word_freq[word]=word_count[word]/num_words
-     print("frequency_of_each_word: ", word_freq)
     return word_freq
 
 #מחשב ממוצע אורך מילה 
 def average_word_length(tok,num_words):
+    if num_words == 0:
+        return 0
     total_length = sum(len(word) for word in tok["words"])
     print("average_word_length: ", total_length / num_words)
     return total_length/num_words

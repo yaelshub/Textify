@@ -4,7 +4,12 @@ from flask import Flask
 import json, os
 from controlers.auth_controller import auth_bp
 from controlers.text_controller import text_bp
+import os
+import runpy
 
+base_path = os.path.dirname(os.path.abspath(__file__))  # זה יביא את הנתיב ל-app.py
+target_script = os.path.join(base_path, "services", "model_training", "random_forest", "feature_extraction.py")
+runpy.run_path(target_script)
 app = Flask(__name__)
 CORS(app)  
 USERS_FILE = "users.json"
@@ -59,6 +64,8 @@ def login_user():
 
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(text_bp, url_prefix='/text')
+
+
 
 if __name__ == "__main__":
     app.run(debug=True ,host='127.0.0.1', port=5000)

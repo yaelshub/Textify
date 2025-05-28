@@ -1,0 +1,7 @@
+server/dal/testing/*
+server/dal/textData/*
+**/__pycache__/
+**/venv/
+*.csv
+*.pyc
+__pycache__/

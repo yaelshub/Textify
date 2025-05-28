@@ -1,13 +1,14 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import axios from 'axios';
 import "../css/Text.css";
 
-
 export default function Text() {
     const fileInputRef = useRef(null);
-    const [tokens, setTokens] = React.useState(null); // משתנה לשמירת תוצאות הטוקניזציה 
+    const [tokens, setTokens] = useState(null);
+    const [isLoading, setIsLoading] = useState(false); // << מצב טעינה
+
     const handleUploadClick = () => {
-        fileInputRef.current.click(); // פותח חלון לבחירת קובץ
+        fileInputRef.current.click();
     };
 
     const handleFileChange = async (event) => {
@@ -15,27 +16,34 @@ export default function Text() {
         if (file) {
             const allowedTypes = [
                 "application/pdf",
-                "application/msword", // .doc
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             ];
             if (allowedTypes.includes(file.type)) {
                 alert(`You uploaded the file: ${file.name}`);
+                setIsLoading(true); //מתחיל עיבוד
                 const formData = new FormData();
                 formData.append("file", file);
-                const response=await axios.post ("http://127.0.0.1:5000/text/collect_data",formData)
-                console.log(response.data);
-                setTimeout(() => {
-                    alert(`
+                try {
+                    const response = await axios.post("http://127.0.0.1:5000/text/collect_data", formData);
+                    console.log(response.data);
+                    setTokens(response.data);
+                    setTimeout(() => {
+                        alert(`
                         Results of your text analysis:
-                        The text you uploaded was analyzed using advanced stylometric tools, based on comparing repetitive patterns in writing style.
-                        Identification results:
                         30% match with Esther Quinn's writing style.
                         90% match with Mia Keenan's writing style.
-                        Important to know: Stylometry can only offer a statistical probability of author identification, but cannot unequivocally determine the identity of the writer. The results are based on analytical patterns, and therefore should always be taken with limited certainty.`);
-                }, 3000);
+                        Important to know: Stylometry can only offer a statistical probability...
+                        `);
+                        setIsLoading(false);    
+                    }, 3000);
+                } catch (error) {
+                    alert("Error analyzing the file.");
+                    setIsLoading(false);
+                }
             } else {
-                alert("Please upload only one file Word (.doc, .docx) or PDF!");
-                fileInputRef.current.value = ""; // איפוס הבחירה
+                alert("Please upload only one PDF file!");
+                fileInputRef.current.value = "";
             }
         }
     };
@@ -51,12 +59,22 @@ export default function Text() {
                     <input
                         type="file"
                         ref={fileInputRef}
-                        accept=".pdf, .doc, .docx" 
-                        hidden
+                        accept=".pdf"
+                        hidden  
                         onChange={handleFileChange}
                     />
                 </div>
-                {tokens && ( // הצגת התוצאות אם קיימות
+                {isLoading && (
+                    <div className="loading-container">
+                        <div className="bouncing-dots">
+                            <span>.</span><span>.</span><span>.</span>
+                        </div>
+                        <p className="loading-text">Your document? We're already in the middle of the story...</p>
+                    </div>
+                )}
+    
+                {/* הצגת תוצאות אם קיימות */}
+                {tokens && (
                     <div className="results">
                         <h3>Tokenization Results:</h3>
                         <div>
@@ -80,6 +98,4 @@ export default function Text() {
             </div>
         </div>
     );
-}
-
-
+}    

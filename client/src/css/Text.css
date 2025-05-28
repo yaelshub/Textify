@@ -3,32 +3,198 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #fdf2f8 0%, #fbcfe8 100%);
+    font-family: 'Inter', sans-serif;
 }
 
 .content-box {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(219, 39, 119, 0.1);
     text-align: center;
+    min-width: 350px;
+    position: relative;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(244, 114, 182, 0.1);
+}
+
+.content-box p {
+    color: #831843;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
 }
 
 .input-wrapper {
-    margin-top: 20px;
+    margin-top: 1.5rem;
 }
 
 .upload-button {
-    background-color: #007bff;
-    color: #ffffff;
+    background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+    color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
+    padding: 0.75rem 2rem;
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1.1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: 500;
 }
 
 .upload-button:hover {
-    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+    background: linear-gradient(135deg, #db2777 0%, #9d174d 100%);
+}
+
+.loading-container {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.animation-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thinking-animation {
+    position: relative;
+    z-index: 2;
+}
+
+.brain-icon {
+    color: #ec4899;
+    animation: think 3s ease-in-out infinite;
+}
+
+.sparkle {
+    position: absolute;
+    color: #ec4899;
+    opacity: 0.6;
+}
+
+.sparkle-1 {
+    top: 10px;
+    left: 10px;
+    animation: twinkle 2s ease-in-out infinite;
+}
+
+.sparkle-2 {
+    top: 10px;
+    right: 10px;
+    animation: twinkle 2s ease-in-out infinite 0.5s;
+}
+
+.sparkle-3 {
+    bottom: 10px;
+    left: 10px;
+    animation: twinkle 2s ease-in-out infinite 1s;
+}
+
+.sparkle-4 {
+    bottom: 10px;
+    right: 10px;
+    animation: twinkle 2s ease-in-out infinite 1.5s;
+}
+
+.loading-text {
+    color: #be185d;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 0.75rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes think {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    25% {
+        transform: scale(1.1) rotate(-5deg);
+    }
+    50% {
+        transform: scale(1) rotate(0deg);
+    }
+    75% {
+        transform: scale(1.1) rotate(5deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes twinkle {
+    0% { 
+        transform: scale(1) rotate(0deg);
+        opacity: 0.6;
+    }
+    50% { 
+        transform: scale(1.2) rotate(180deg);
+        opacity: 1;
+    }
+    100% { 
+        transform: scale(1) rotate(360deg);
+        opacity: 0.6;
+    }
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.results {
+    margin-top: 2rem;
+    text-align: left;
+    max-height: 300px;
+    overflow-y: auto;
+    border-top: 1px solid rgba(236, 72, 153, 0.2);
+    padding-top: 1.5rem;
+}
+
+.results h3 {
+    color: #be185d;
+    margin-bottom: 1rem;
+}
+
+.results h4 {
+    color: #db2777;
+    margin: 1rem 0 0.5rem;
+}
+
+.results ul {
+    padding-left: 1.5rem;
+    color: #831843;
+}
+
+.results li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+.bouncing-dots span {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin: 0 4px;
+    background-color: #333;
+    border-radius: 50%;
+    animation: bounce 0.6s infinite;
+    animation-delay: calc(var(--i) * 0.2s);
+}
+
+.bouncing-dots span:nth-child(1) { --i: 0; }
+.bouncing-dots span:nth-child(2) { --i: 1; }
+.bouncing-dots span:nth-child(3) { --i: 2; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
 }

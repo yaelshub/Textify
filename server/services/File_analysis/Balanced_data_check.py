@@ -1,7 +1,18 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-from extract_from_PDF import extract_text_from_pdf
+from PyPDF2 import PdfReader
+from .extraction_and_cutting import extract_text_from_pdf
+
+def extract_text_from_pdf(file_stream):
+    try:
+        reader = PdfReader(file_stream)
+        text = ""
+        for page in reader.pages:
+            text += page.extract_text()
+    except Exception as e:
+        print("שגיאה בקריאת ה-PDF:", e)
+    return text
 
 def count_lines(text):
     return len(text.splitlines())
@@ -27,16 +38,17 @@ def get_author_line_counts(root_dir):
         author_line_counts[author] = count_lines_in_author_dir(author_path)
     return author_line_counts
 
+def data_balance_and_pie_drawing():
+    root_dir = r"D:\Textify\server\dal\textData"
+    author_line_counts = get_author_line_counts(root_dir)
 
-root_dir = r"D:\Textify\server\dal\textData"
-author_line_counts = get_author_line_counts(root_dir)
+    df = pd.DataFrame(list(author_line_counts.items()), columns=['Author', 'Line Count'])
 
-df = pd.DataFrame(list(author_line_counts.items()), columns=['Author', 'Line Count'])
-
-plt.figure(figsize=(8, 8))
-plt.pie(df['Line Count'], labels=df['Author'], autopct='%1.1f%%', startangle=140, pctdistance=0.85)
-plt.title('Balanced data',pad=5)
-plt.axis('equal') 
-plt.show()
+    plt.figure(figsize=(8, 8))
+    plt.pie(df['Line Count'], labels=df['Author'], autopct='%1.1f%%', startangle=140, pctdistance=0.85)
+    plt.title('Balanced data',pad=5)
+    plt.axis('equal') 
+    plt.show()
 
 
+# data_balance_and_pie_drawing()
