@@ -1,7 +1,7 @@
 import spacy
 import re
 import numpy as np
-from .tokenization import tokenize_text
+# from .tokenization import tokenize_text
 from collections import Counter
 
 nlp = spacy.load("en_core_web_sm")

@@ -1,4 +1,4 @@
-from .extraction_and_cutting import extract_text_from_pdf
+# from .extraction_and_cutting import extract_text_from_pdf
 from .balanced_data_check import count_lines
 from .tokenization import tokenize_text
 from .clean import clean_text

@@ -8,7 +8,7 @@ import os
 import runpy
 
 base_path = os.path.dirname(os.path.abspath(__file__))  # זה יביא את הנתיב ל-app.py
-target_script = os.path.join(base_path, "services", "model_training", "random_forest", "feature_extraction.py")
+target_script = os.path.join(base_path, "services", "file_analysis", "feature_extraction.py")
 runpy.run_path(target_script)
 app = Flask(__name__)
 CORS(app)  
@@ -61,6 +61,25 @@ def login_user():
             return jsonify({"message": "User found"}), 200
 
     return jsonify({"error": "user not found"}), 404
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    data = request.get_json()
+    name = data.get("name")
+
+    users_file = "users.json"
+    if os.path.exists(users_file):
+        with open(users_file, "r") as f:
+            users = json.load(f)
+
+        users = [user for user in users if user["name"] != name]
+
+        with open(users_file, "w") as f:
+            json.dump(users, f, indent=2)
+
+    return jsonify({"message": f"{name} removed"}), 200
+
+
 
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(text_bp, url_prefix='/text')

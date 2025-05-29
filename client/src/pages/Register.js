@@ -10,10 +10,10 @@ export default function Register() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleClick = () => 
-    {
-        navigate("/Text"); // ניווט לדף "Text"
-    };
+    // const handleClick = () => 
+    // {
+    //     navigate("/Text"); 
+    // };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -43,11 +43,11 @@ export default function Register() {
             <h1>Welcome</h1>
             <h2>sign up to get started:</h2>
             <form onSubmit={handleSubmit}>
-                <label htmlFor="fullName">fullName</label>
+                <label htmlFor="Full Name">fullName</label>
                 <input
                     type="text"
-                    id="fullName"
-                    name="fullName"
+                    id="Full Name"
+                    name="Full Name"
                     value={formData.fullName}
                     onChange={handleChange}
                     required

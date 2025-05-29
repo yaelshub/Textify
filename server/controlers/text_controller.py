@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 import io
-from server.services.File_analysis.file_analysis import main
-from server.services.File_analysis.extraction_and_cutting import extract_text_from_pdf
+from services.File_analysis.file_analysis import file_analysis
+from services.File_analysis.extraction_and_cutting import extract_text_from_pdf
 text_bp = Blueprint('text', __name__)
 
 
@@ -20,7 +20,7 @@ def collect_data():
         text = extract_text_from_pdf(file_stream)
 
         # הרצת הפונקציה
-        results = main(text)
+        results = file_analysis(text)
 
         # הדפסת תוצאות בצד השרת
         print("=== תוצאות ניתוח הטקסט ===")

@@ -1,6 +1,7 @@
 # controllers/auth_controller.py
 from flask import Blueprint, request, jsonify
 import json
+import os
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -34,3 +35,26 @@ def login():
 		return jsonify({"message": "התחברות הצליחה"}), 200
 	else:
 		return jsonify({"error": "אימייל או סיסמה שגויים"}), 401
+
+
+@auth_bp.route('/logout', methods=['POST'])
+def logout():
+    data = request.json
+    email = data.get("email")
+
+    if not email:
+        return jsonify({"error": "אימייל לא סופק"}), 400
+
+    if not os.path.exists(USERS_FILE):
+        return jsonify({"error": "קובץ משתמשים לא נמצא"}), 500
+
+    with open(USERS_FILE, "r") as file:
+        users = json.load(file)
+
+    # מסנן את המשתמשים כדי להשאיר רק את אלו שלא שייכים לאימייל הזה
+    filtered_users = [user for user in users if user["email"] != email]
+
+    with open(USERS_FILE, "w") as file:
+        json.dump(filtered_users, file, indent=4)
+
+    return jsonify({"message": f"המשתמש {email} הוסר בהצלחה"}), 200

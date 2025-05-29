@@ -1,8 +1,8 @@
 import os
 import csv
 import io
-from .file_analysis import main  
-from .extraction_and_cutting import extract_text_from_pdf, split_text_into_chapters
+from services.File_analysis import file_analysis
+from services.File_analysis.extraction_and_cutting import extract_text_from_pdf, split_text_into_chapters
 
 def feature_extraction():
     base_path = r"D:\Textify\server\dal\textData"
@@ -55,7 +55,7 @@ def feature_extraction():
                                 continue
 
                             try:
-                                result = main(chapter)
+                                result = file_analysis(chapter)
                                 if isinstance(result, list) and len(result) == len(header) - 3:
                                     row = result + [filename, i + 1, author]
                                     rows.append(row)

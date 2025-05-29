@@ -3,30 +3,39 @@ import { useNavigate } from "react-router-dom";
 import '../css/login.css';
 
 
-export default function Login() {
+export default function Login() 
+{
   const [username, setUsername] = useState('');
   const [userMail, setUserMail] = useState('');
   const navigate = useNavigate();
 
-  const loginClicked = async () => {    
-    try {
-        const response = await fetch("http://127.0.0.1:5000/login", {
+  const loginClicked = async () => 
+    {    
+    try 
+    {
+        const response = await fetch("http://127.0.0.1:5000/login", 
+            {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ fullName: username, email: userMail }),
-        });
+            });
 
-        if (response.ok) {
+        if (response.ok) 
+        {
             alert(`Hi ${username}!`);
             navigate("/Text");
-        } else {
+        }
+        else 
+        {
             alert("we could not find this user in our system.");
         }
-    } catch (error) {
+    } 
+    catch (error) 
+    {
         console.error("An error has occured:", error);
         alert("An error has occured.");
     }
-};
+    };
   return (
     <div>
       <h1 className='h1'>Login</h1>

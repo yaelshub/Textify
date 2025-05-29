@@ -1,21 +1,25 @@
 import spacy
 
+def tokenize_words(doc):
+    return [token.text for token in doc]
+
+def tokenize_sentences(doc):
+    return [sent.text for sent in doc.sents]
 
 def tokenize_text(text):
-
-    tok=None
-
+    tok = None
     try:
         nlp = spacy.load("en_core_web_sm")
+        text = text.lower()
         doc = nlp(text)
 
-        text = text.lower()
-        words = [token.text for token in doc]
-        sentences = [sent.text for sent in doc.sents]
-        tok = {"words": words, "sentences": sentences}
+        words = tokenize_words(doc)
+        sentences = tokenize_sentences(doc)
 
+        tok = {"words": words, "sentences": sentences}
         return tok
 
     except Exception as e:
-        print(f"---------Error in tokenization: {e}")
+        print(f"error in tokenization: {e}")
         raise e
+    

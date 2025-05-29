@@ -5,7 +5,7 @@ import "../css/Text.css";
 export default function Text() {
     const fileInputRef = useRef(null);
     const [tokens, setTokens] = useState(null);
-    const [isLoading, setIsLoading] = useState(false); // << מצב טעינה
+    const [isLoading, setIsLoading] = useState(false); 
 
     const handleUploadClick = () => {
         fileInputRef.current.click();
