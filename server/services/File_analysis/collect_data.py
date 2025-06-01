@@ -45,7 +45,6 @@ def number_of_words_in_each_sentence(text):
 #ממוצע מילים במשפט
 def calculate_average_word_count(words_per_sentence):
     average = sum(words_per_sentence) / len(words_per_sentence) if words_per_sentence else 0
-    print("calculate_average_word_count: ", average)
     return average
 
 #סטיית תקן של  כמות המילים במשפט
@@ -61,13 +60,11 @@ def Standard_deviation_of_the_number_of_words_in_a_sentence(words_per_sentence):
 #מספר המילים בטקסט
 def number_of_words_per_text(tok):
     num_words=len(tok["words"])
-    print("number_of_words_per_text: ", num_words)
     return num_words
 
 #סופר מספר פעמים בו כל מילה מופיעה בטקסט
 def number_of_times_a_word_appears_in_text(tok):
     word_count = Counter(tok["words"])
-    print("number_of_times_a_word_appears_in_text: ", word_count)
     return word_count
 
 #מחשב תדירות של כל מילה
@@ -82,7 +79,6 @@ def average_word_length(tok,num_words):
     if num_words == 0:
         return 0
     total_length = sum(len(word) for word in tok["words"])
-    print("average_word_length: ", total_length / num_words)
     return total_length/num_words
 
 

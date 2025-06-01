@@ -1,82 +1,122 @@
-import os
-import csv
-import io
-from services.File_analysis import file_analysis
-from services.File_analysis.extraction_and_cutting import extract_text_from_pdf, split_text_into_chapters
+import os, csv, io
+from .file_analysis import file_analysis
+from .extraction_and_cutting import extract_text_from_pdf, split_text_into_chapters
+
+BASE_PATH = r"D:\Textify\server\dal\textData"
+AUTHORS = ["Charles_Dickens"]
+
+HEADER = [
+    "num_words",                      
+    "word_info",                      
+    "entity_identification",          
+    "number_of_words_in_each_sentence",
+    "calculate_average_word_count",    
+    "std_dev_words_per_sentence",      
+    "number_of_words_per_text",        
+    "word_count_info",                
+    "frequency_info",                  
+    "average_word_length",            
+    "sentence_types",                  
+    "word_frequencies",                
+    "count_personification",          
+    "book", "chapter", "author"        
+]
+
+EXPECTED_LEN = len(HEADER) - 3       
+# אינדקסים של הפריטים שרוצים להסיר מה-file_analysis (clean_text=1, tokenize_text=2)
+DROP_IDX = {1, 2}
+
+def strip_label(x):
+#מסיר את התווית מהערך - מחזיר רק את הערך עצמו
+    if isinstance(x, str):
+        if ": " in x:
+            return x.split(": ", 1)[1]
+        elif ":" in x:
+            return x.split(":", 1)[1].strip()
+    return x
+
+def process_chapter(chapter, filename, chap_idx, author):
+ #עיבוד פרק יחיד והמרה לשורת CSV
+    feat = file_analysis(chapter)
+    
+    if isinstance(feat, list):
+        # הסרת הרשימה האחרונה אם קיימת (לא נחוצה)
+        if len(feat) > 0 and isinstance(feat[-1], list):
+            feat = feat[:-1]
+        
+        # הסרת העמודות שלא רוצים (clean_text, tokenize_text)
+        feat = [v for i, v in enumerate(feat) if i not in DROP_IDX]
+        
+        # ניקוי הערכים מהתוויות
+        cleaned_feat = []
+        for item in feat:
+            cleaned_value = strip_label(item)
+            cleaned_feat.append(cleaned_value)
+        
+        # בדיקה שהאורך נכון
+        if len(cleaned_feat) == EXPECTED_LEN:
+            return cleaned_feat + [filename, chap_idx + 1, author]
+        else:
+            print(f"Length mismatch: expected {EXPECTED_LEN}, got {len(cleaned_feat)} in {filename} chap {chap_idx+1}")
+    
+    print(f"Format mismatch in {filename} chap {chap_idx+1}")
+    return None
+
+def process_author(author):
+#עיבוד כל הקבצים של סופר אחד
+    print(f"Processing {author}")
+    author_dir = os.path.join(BASE_PATH, author)
+    
+    if not os.path.exists(author_dir):
+        print(f"Directory not found: {author_dir}")
+        return
+    
+    pdfs = [f for f in os.listdir(author_dir) if f.endswith(".pdf")]
+    
+    if not pdfs:
+        print(f"No PDF files found in {author_dir}")
+        return
+    
+    rows = []
+    
+    for pdf in pdfs:
+        print(f"Processing {pdf}")
+        try:
+            with open(os.path.join(author_dir, pdf), "rb") as fh:
+                text = extract_text_from_pdf(io.BytesIO(fh.read()))
+            
+            chapters = split_text_into_chapters(text)
+            print(f"Found {len(chapters)} chapters in {pdf}")
+            
+            for i, chap in enumerate(chapters):
+                row = process_chapter(chap, pdf, i, author)
+                if row:
+                    rows.append(row)
+                    
+        except Exception as e:
+            print(f"Error processing {pdf}: {e}")
+    
+    if rows:    
+        out_csv = os.path.join(author_dir, f"{author}_features.csv")
+        with open(out_csv, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            # כתיבת הכותרת
+            writer.writerow(HEADER)
+            # כתיבת הנתונים 
+            writer.writerows(rows)
+        print(f"Saved {len(rows)} rows → {out_csv}")
+    else:
+        print("No valid rows – nothing saved")
 
 def feature_extraction():
-    base_path = r"D:\Textify\server\dal\textData"
-    authors = ["Charles_Dickens","H_G_Wells","Jane-Austen","Mark_Twain"]
-    for author in authors:
-        print(f"Processing author: {author}")
-        author_path = os.path.join(base_path, author)
-
-        if not os.path.exists(author_path):
-            print(f"Warning: Directory not found for {author}: {author_path}")
-            continue
-
-        output_file = os.path.join(author_path, f"{author.replace(' ', '_')}_features.csv")
-        rows = []
-        header = [
-            "num_words", "clean_text", "tokenize_text", "word_info", 
-            "entity_identification", "number_of_words_in_each_sentence",
-            "calculate_average_word_count", "std_dev_words_per_sentence",
-            "number_of_words_per_text", "word_count_info", "frequency_info",
-            "average_word_length", "sentence_types", "word_frequencies",
-            "count_personification", "book", "chapter", "author"
-        ]
-
+#פונקציה ראשית להפקת מאפיינים
+    for author in AUTHORS:
         try:
-            pdf_files = [f for f in os.listdir(author_path) if f.endswith(".pdf")]
-            if not pdf_files:
-                print(f"No PDF files found for {author}")
-                continue
-
-            print(f"Found {len(pdf_files)} PDF files for {author}")
-
-            for filename in pdf_files:
-                print(f"Processing: {filename}")
-                file_path = os.path.join(author_path, filename)
-
-                try:
-                    with open(file_path, "rb") as f:
-                        file_stream = io.BytesIO(f.read())
-                        full_text = extract_text_from_pdf(file_stream)
-
-                        if not full_text.strip():
-                            print(f"Warning: No text extracted from {filename}")
-                            continue
-
-                        chapters = split_text_into_chapters(full_text)
-                        print(f"Split into {len(chapters)} chapters")
-
-                        for i, chapter in enumerate(chapters):
-                            if not chapter.strip():
-                                continue
-
-                            try:
-                                result = file_analysis(chapter)
-                                if isinstance(result, list) and len(result) == len(header) - 3:
-                                    row = result + [filename, i + 1, author]
-                                    rows.append(row)
-                                else:
-                                    print(f"Warning: Unexpected result format in chapter {i + 1}")
-                            except Exception as e:
-                                print(f"Error processing chapter {i + 1}: {e}")
-                except Exception as e:
-                    print(f"Error reading file {filename}: {e}")
-
-            if rows:
-                with open(output_file, mode='w', newline='', encoding='utf-8') as file:
-                    writer = csv.writer(file)
-                    writer.writerow(header)
-                    writer.writerows(rows)
-                print(f"Processed {len(rows)} rows for {author}")
-            else:
-                print(f"No data saved for {author}")
+            process_author(author)
         except Exception as e:
             print(f"Error processing author {author}: {e}")
-
     print("Feature extraction completed!")
 
-feature_extraction()
+
+if __name__ == "__main__":
+    feature_extraction()

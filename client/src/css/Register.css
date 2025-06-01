@@ -53,21 +53,23 @@ button {
 }
 
 button:hover {
-    background-color: #ff00ff; /* Fuchsia */
+    background-color: #ff00ff; 
 }
 
 a {
-    color: #ff69b4; /* Pink */
+    color: white; 
     text-decoration: none;
 }
 
 /* אלמנטים מעניינים */
-
 .container {
     position: relative;
+    z-index: 1;
 }
 
 .container::before {
+    pointer-events: none;
+    z-index: 0;
     content: "";
     position: absolute;
     top: -10px;
@@ -97,3 +99,10 @@ button:disabled:hover {
 a:hover {
     text-decoration: underline;
 }
+input:focus 
+{
+   outline: none;
+   border-color: #ff69b4;
+   box-shadow: 0 0 5px #ff69b4;
+ }
+    

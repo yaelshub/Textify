@@ -14,11 +14,7 @@ export default function Text() {
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
-            const allowedTypes = [
-                "application/pdf",
-                "application/msword",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            ];
+            const allowedTypes = ["application/pdf"];
             if (allowedTypes.includes(file.type)) {
                 alert(`You uploaded the file: ${file.name}`);
                 setIsLoading(true); //מתחיל עיבוד
@@ -26,7 +22,6 @@ export default function Text() {
                 formData.append("file", file);
                 try {
                     const response = await axios.post("http://127.0.0.1:5000/text/collect_data", formData);
-                    console.log(response.data);
                     setTokens(response.data);
                     setTimeout(() => {
                         alert(`
@@ -43,7 +38,7 @@ export default function Text() {
                 }
             } else {
                 alert("Please upload only one PDF file!");
-                fileInputRef.current.value = "";
+                event.target.value = null;
             }
         }
     };
@@ -51,7 +46,7 @@ export default function Text() {
     return (
         <div className="page-container">
             <div className="content-box">
-                <p>Dear user, please upload a Word or PDF file:</p>
+                <p>Dear user, please upload PDF file:</p>
                 <div className="input-wrapper">
                     <button className="upload-button" onClick={handleUploadClick}>
                         📎

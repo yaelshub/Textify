@@ -33,4 +33,6 @@ button {
   cursor: pointer;
   border-radius: 25px;
   transition: background-color 0.3s ease, transform 0.3s ease;
+  margin: 8px 0; 
+
 }
