@@ -17,7 +17,7 @@ export default function Text() {
             const allowedTypes = ["application/pdf"];
             if (allowedTypes.includes(file.type)) {
                 alert(`You uploaded the file: ${file.name}`);
-                setIsLoading(true); //מתחיל עיבוד
+                setIsLoading(true); 
                 const formData = new FormData();
                 formData.append("file", file);
                 try {
@@ -68,7 +68,6 @@ export default function Text() {
                     </div>
                 )}
     
-                {/* הצגת תוצאות אם קיימות */}
                 {tokens && (
                     <div className="results">
                         <h3>Tokenization Results:</h3>

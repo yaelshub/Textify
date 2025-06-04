@@ -1,4 +1,3 @@
-from PyPDF2 import PdfReader
 from pdfminer.high_level import extract_text
 import re
 
@@ -7,16 +6,21 @@ def extract_text_from_pdf(file_path):
         text = extract_text(file_path)
         return text
     except Exception as e:
-        print("שגיאה בקריאת ה-PDF:", e)
+        print("Error reading PDF:", e)
         return ""
     
-def split_text_into_chapters(text):
+def split_text_into_chapters(pdf_file_path):
+    text = extract_text_from_pdf(pdf_file_path)
+    if not text:
+        print(f"Unable to extract text from{pdf_file_path}")
+        return []
+
     chapter_patterns = [
         r'^\s*(CHAPTER|Chapter|chapter)\s+(\d+|[IVXLCDM]+)\s*(?:[\-:.\n\r\s]*)$',  # CHAPTER 1, Chapter I
-        r'^\s*(CHAPTER|Chapter|chapter)\s+(THE\s+)?(FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH|SEVENTH|EIGHTH|NINTH|TENTH)\s*(?:[\-:.\n\r\s]*)$',  # CHAPTER THE FIRST
+        r'^\s*(CHAPTER|Chapter|chapter)\s+(THE\s+)?(FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH|SEVENTH|EIGHTH|NINTH|TENTH)\s*(?:[\-:.\n\r\s]*)$',  # CHAPTER FIRST, CHAPTER SECOND
         r'^\s*(BOOK|Book|Part|PART)\s+(\d+|[IVXLCDM]+)\s*(?:[\-:.\n\r\s]*)$',  # BOOK I, PART II
-        r'^\s*[IVXLCDM]+\.\s+[A-Z][a-zA-Z\s\-:,\'"]{3,}$',  # I. The Beginning
-        r'^\s*CHAPTER\s+\d+\.\s+[A-Z ]{3,}$'  # CHAPTER 1. SUN AND SHADOW
+        r'^\s*[IVXLCDM]+\.\s+[A-Z][a-zA-Z\s\-:,\'"]{3,}$',  # I. 
+        r'^\s*CHAPTER\s+\d+\.\s+[A-Z ]{3,}$'  # CHAPTER 1. 
     ]
 
     combined_pattern = '|'.join(f'({p})' for p in chapter_patterns)
@@ -25,7 +29,7 @@ def split_text_into_chapters(text):
     matches = list(regex.finditer(text))
 
     if not matches:
-        print("לא נמצאו פרקים לפי תבניות ידועות.")
+        print("No chapters found according to known patterns.")
         return []
 
     chapters = []

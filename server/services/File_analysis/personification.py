@@ -4,7 +4,6 @@ import os
 
 # פונקציה שבודקת האם משפט כולל האנשה
 def check_personification(sentence: str) -> bool:
-    # הגדרת נתיבים לקבצים
     BASE_DIR = os.path.dirname(__file__)
     MODEL_PATH = os.path.join(BASE_DIR, '..', 'model_training', 'personification_model', 'personification_model.pkl')
     VECTORIZER_PATH = os.path.join(BASE_DIR, '..', 'model_training', 'personification_model', 'vectorizer.pkl')
