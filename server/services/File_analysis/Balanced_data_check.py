@@ -11,7 +11,7 @@ def extract_text_from_pdf(file_stream):
         for page in reader.pages:
             text += page.extract_text()
     except Exception as e:
-        print("שגיאה בקריאת ה-PDF:", e)
+        print("error reading the PDF:", e)
     return text
 
 def count_lines(text):
@@ -26,7 +26,7 @@ def count_lines_in_author_dir(author_path):
                 text = extract_text_from_pdf(file_path)
                 total_lines += count_lines(text)
             except Exception as e:
-                print(f"שגיאה בעיבוד הקובץ {file_path}: {e}")
+                print(f"error processing file {file_path}: {e}")
     return total_lines
 
 def get_author_line_counts(root_dir):
@@ -51,4 +51,3 @@ def data_balance_and_pie_drawing():
     plt.show()
 
 
-# data_balance_and_pie_drawing()

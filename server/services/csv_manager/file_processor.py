@@ -1,6 +1,6 @@
-from File_analysis import extraction_and_cutting
-from File_analysis import file_analysis
-from chapter_processor import process_chapter_result
+from ..file_analysis import extraction_and_cutting
+from ..file_analysis import file_analysis1
+from build_csv_row_from_chapter import process_chapter_result
 import io
 import os
 
@@ -25,8 +25,8 @@ def process_file(file_path, filename, author, full_header, indices_to_keep):
                 if not chapter.strip():
                     continue
                 try:
-                    result = file_analysis.file_analysis(chapter)
-                    chapter_rows = process_chapter_result(result, filename, i + 1, author, full_header, indices_to_keep)
+                    result = file_analysis1.file_analysis(chapter)
+                    chapter_rows = process_chapter_result(result, filename, i + 1, author, full_header, indices_to_keep, chapter)
                     if chapter_rows:
                         rows.extend(chapter_rows)
                     else:

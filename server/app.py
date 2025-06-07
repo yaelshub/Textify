@@ -2,8 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask import Flask
 import json, os
-from controlers.auth_controller import auth_bp
-from controlers.text_controller import text_bp
+from controllers.auth_controller import auth_bp
+from controllers.text_controller import text_bp
 import os
 import runpy
 

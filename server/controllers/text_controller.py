@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 import io
-from services.File_analysis.file_analysis import file_analysis
-from services.File_analysis.extraction_and_cutting import extract_text_from_pdf
+from server.services.file_analysis.file_analysis1 import file_analysis
+from services.file_analysis.extraction_and_cutting import extract_text_from_pdf
 text_bp = Blueprint('text', __name__)
 
 

@@ -1,5 +1,5 @@
 import os, csv, io
-from .file_analysis import file_analysis
+from server.services.file_analysis.file_analysis1 import file_analysis
 from .extraction_and_cutting import extract_text_from_pdf, split_text_into_chapters
 
 BASE_PATH = r"D:\Textify\server\dal\textData"

@@ -1,93 +1,65 @@
-import xgboost as xgb
-from sklearn.metrics import accuracy_score
-import joblib
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+from scipy.sparse import hstack
+import matplotlib.pyplot as plt
+import xgboost as xgb
+csv_paths = {
+    'Charles Dickens': 'data/Charles Dickens.csv',
+    'H. G. Wells': 'data/H. G. Wells.csv',
+    'Jane Austen': 'data/Jane Austen.csv',
+    'Mark Twain': 'data/Mark Twain.csv'
+}
 
-
-def train_author_classifier(csv_paths: dict, model_output_path: str = 'author_identifier_model.pkl'):
+# פונקציה לטעינת הקבצים והוספת עמודת author
+def load_and_label_data(csv_paths: dict) -> pd.DataFrame:
     dataframes = []
-    # Read and combine the data
     for author, path in csv_paths.items():
-        try:
-            df = pd.read_csv(path)
-            df['author'] = author
-            dataframes.append(df)
-            print(f"Loaded data for {author}: {len(df)} samples")
-        except FileNotFoundError:
-            print(f"Warning: File not found for {author}: {path}")
-            continue
-        except Exception as e:
-            print(f"Error loading data for {author}: {e}")
-            continue
-    
-    if not dataframes:
-        raise ValueError("No valid data files were loaded")
-    
-    # Combine all dataframes
-    data = pd.concat(dataframes, ignore_index=True)
-    print(f"Total combined data: {len(data)} samples")
-    
-    # Check if we have the required columns
-    if 'author' not in data.columns:
-        raise ValueError("'author' column not found in the data")
-    
-    # Separate features (X) and labels (y)
-    X = data.drop('author', axis=1)
-    y = data['author']
-    
-    # Check for non-numeric features and handle them
-    non_numeric_cols = X.select_dtypes(exclude=['number']).columns
-    if len(non_numeric_cols) > 0:
-        print(f"Warning: Non-numeric columns found: {list(non_numeric_cols)}")
-        print("These columns will be dropped. Consider encoding them if they're important features.")
-        X = X.select_dtypes(include=['number'])
-    
-    if X.empty:
-        raise ValueError("No numeric features found for training")
-    
-    print(f"Features shape: {X.shape}")
-    print(f"Unique authors: {y.nunique()}")
-    
-    # Split into training and test sets
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
-    
-    # Initialize and train the model
-    model = xgb.XGBClassifier(
-        random_state=42,
-        eval_metric='mlogloss'  # Suppress warning for multiclass
-    )
-    
-    print("Training model...")
-    model.fit(X_train, y_train)
-    
-    # Test model performance
-    y_pred = model.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    print(f"Model accuracy: {accuracy:.2f}")
-    
-    # Save the model
-    try:
-        joblib.dump(model, model_output_path)
-        print(f"Model saved as {model_output_path}")
-    except Exception as e:
-        print(f"Error saving model: {e}")
-    
-    return model, accuracy
+        df = pd.read_csv(path)
+        df['author'] = author
+        dataframes.append(df)
+    return pd.concat(dataframes, ignore_index=True)
 
+# שלב 1: טען את הדאטה
+df = load_and_label_data(csv_paths)
 
-# Example usage:
-if __name__ == "__main__":
-    csv_paths = {
-        'author1': 'D:\Textify\server\data\Charles_Dickens.csv',
-        'author2': 'D:\Textify\server\data\H. G. Wells.csv',
-        'author3': 'D:\Textify\server\data\Jane_Austen.csv',
-        'author4': 'D:\Textify\server\data\Mark_Twain.csv'
-    }
-    try:
-        model, accuracy = train_author_classifier(csv_paths)
-        print(f"Training completed successfully with {accuracy:.2%} accuracy")
-    except Exception as e:
-        print(f"Training failed: {e}")
+# שלב 2: יצירת TF-IDF מהעמודה 'text'
+vectorizer = TfidfVectorizer(max_features=500)
+X_tfidf = vectorizer.fit_transform(df['text'])
+
+# שלב 3: חילוץ תכונות מספריות בלבד
+features_df = df.drop(columns=['text', 'author'])
+features_df = features_df.select_dtypes(include=['number'])
+
+# שלב 4: שילוב כל הפיצ'רים
+X_combined = hstack([X_tfidf, features_df.values])
+
+# שלב 5: תוויות
+y = df['author']
+
+# שלב 6: Train/Test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X_combined, y, test_size=0.2, stratify=y, random_state=42
+)
+
+# שלב 7: אימון מודל XGBoost
+model = xgb.XGBClassifier(
+    use_label_encoder=False,
+    eval_metric='mlogloss',
+    random_state=42
+)
+model.fit(X_train, y_train)
+
+# שלב 8: ניבוי ותצוגת תוצאות
+y_pred = model.predict(X_test)
+
+print("=== Classification Report ===")
+print(classification_report(y_test, y_pred))
+
+print("=== Confusion Matrix ===")
+cm = confusion_matrix(y_test, y_pred, labels=np.unique(y))
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=np.unique(y))
+disp.plot(cmap=plt.cm.Blues)
+plt.show()

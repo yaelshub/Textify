@@ -1,19 +1,25 @@
 import os
 import pandas as pd
-from server.services.file_analysis.extraction_and_cutting import split_text_into_chapters
+from sklearn.feature_extraction.text import TfidfVectorizer
+from services.file_analysis.extraction_and_cutting import split_text_into_chapters
 import csv  
+
+
+def undersample_dataframe(df):
+    min_count = df['author'].value_counts().min()
+    print(f"\nApplying undersampling: taking {min_count} samples from each author...")
+    balanced_df = df.groupby('author').sample(n=min_count, random_state=42)
+    return balanced_df
 
 def process_authors_pdfs(base_path):
     all_texts = []
     all_authors = []
        
-# רשימת תיקיות המחברים
     author_folders = ['Charles_Dickens', 'H_G_Wells', 'Jane_Austen', 'Mark_Twain']
-    
+
     for author_folder in author_folders:
         author_path = os.path.join(base_path, author_folder)
         
-# בדוק אם התיקיה קיימת
         if not os.path.exists(author_path):
             print(f"the folder {author_path} not found")
             continue
@@ -49,7 +55,6 @@ def create_csv_file():
     base_path = r"D:\Textify\server\dal\textData"
     print("starting to process the PDF files...")
     texts, authors = process_authors_pdfs(base_path)
-    
     if not texts:
         print("no texts found for processing!")
         return
@@ -60,18 +65,17 @@ def create_csv_file():
         'author': authors
     }
     df = pd.DataFrame(data)
-    output_file = 'texts_authors.csv'
-    df.to_csv(output_file, index=False, encoding='utf-8', lineterminator='\n', quoting=csv.QUOTE_ALL)
+    df["text"] = df["text"].str.replace(r'\s+', ' ', regex=True).str.strip()
+    df = undersample_dataframe(df)
 
+    output_file = 'texts_authors.csv'
+    df.to_csv(output_file, index=False, encoding='utf-8', quoting=csv.QUOTE_MINIMAL)
     print(f"\n completed! file created{output_file}")
     print(f"total segments: {len(df)}")
     print(f"authors: {df['author'].unique()}")
     print(f"distribution of sections by author:")
     print(df['author'].value_counts())
-
-# הצג דוגמה מהנתונים
-    print(f"\nדוגמה מהנתונים:")
-    print(df.head())
-
+    df = pd.read_csv("texts_authors.csv", index_col=False)  
+    print(df)  
 if __name__ == "__main__":
     create_csv_file()

@@ -1,4 +1,4 @@
-from author_processor import process_author
+from convert_author_pdfs_to_features import process_author
 from config import BASE_PATH, AUTHORS
 
 def main():
@@ -9,5 +9,4 @@ def main():
             print(f"Error processing author {author}: {e}")
     print("Feature extraction completed!")
 
-if __name__ == "__main__":
-    main()
+main()

@@ -1,5 +1,5 @@
 from file_processor import get_pdf_files_from_directory, process_file
-from csv_writer import save_rows_to_csv 
+from save_feature_data_to_csv import save_feature_data_to_csv 
 from build_csv_headers import build_csv_headers   
 import os
 
@@ -34,6 +34,6 @@ def process_author(author, base_path):
         all_rows.extend(file_rows)
 
     if all_rows and csv_header:
-        save_rows_to_csv(all_rows, csv_header, output_file)
+        save_feature_data_to_csv(all_rows, csv_header, output_file)
     else:
         print(f"No data saved for {author}")

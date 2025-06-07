@@ -56,8 +56,5 @@ for name, model in models.items():
         best_model = model
         best_model_name = name
 
-# שמירת המודל הטוב ביותר
-joblib.dump(best_model, "sentence_type_model.pkl")
-joblib.dump(vectorizer, "sentence_type_vectorizer.pkl")
 
 print(f"\nBest model: {best_model_name} with accuracy {best_score:.4f}")
