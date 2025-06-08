@@ -6,12 +6,12 @@ from server.controllers.auth_controller import auth_bp
 from server.controllers.text_controller import text_bp
 import os
 import runpy
-
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 base_path = os.path.dirname(os.path.abspath(__file__))  # זה יביא את הנתיב ל-app.py
 target_script = os.path.join(base_path, "services", "file_analysis", "feature_extraction.py")
 runpy.run_path(target_script)
-app = Flask(__name__)
-CORS(app)  
+
 USERS_FILE = "users.json"
 
 # יצירת קובץ users.json אם אינו קיים

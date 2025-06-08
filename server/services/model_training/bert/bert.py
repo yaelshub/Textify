@@ -33,21 +33,3 @@ def analyze_text(text, model_path):
     # החזר גם את התחזית וגם את ההסתברויות לכל מחבר
     label_probs = dict(zip(label_encoder.classes_, [round(p, 4) for p in probs]))
     return predicted_label, label_probs
-
-# דוגמה להפעלה ישירה (לבדיקות בלבד)
-if __name__ == "__main__":
-    import time
-    start_time = time.time()
-
-    text = """Langford, Dec.
-    MY DEAR BROTHER,—I can no longer refuse myself the pleasure of profiting..."""
-    
-    model_path = "model_folder"  # שנה לתיקיה שלך
-    predicted_label, probabilities = analyze_text(text, model_path)
-
-    print(f"Prediction: {predicted_label}")
-    print("Probabilities per author:")
-    for label, prob in probabilities.items():
-        print(f"  {label}: {prob*100:.2f}%")
-
-    print(f"זמן ריצה: {time.time() - start_time:.2f} שניות")

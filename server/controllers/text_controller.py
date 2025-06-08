@@ -6,8 +6,6 @@ from server.services.model_training.bert.bert import analyze_text
 
 text_bp = Blueprint('text', __name__)
 
-
-
 @text_bp.route("/collect_data", methods=["POST"])
 def collect_data():
     if 'file' not in request.files:
@@ -25,8 +23,6 @@ def collect_data():
 
         # עכשיו אפשר לשלוח את הנתיב לפונקציה שלך
         text = extract_text_from_pdf(temp_path)
-
-        # אם לא צריך את הקובץ אחר כך, אפשר למחוק אותו
         os.remove(temp_path)
         predicted_label, prob_dict = analyze_text(text, "D:/Textify/server/services/model_training/BertModel")
 
