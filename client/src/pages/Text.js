@@ -68,27 +68,20 @@ export default function Text() {
                     </div>
                 )}
     
-                {tokens && (
-                    <div className="results">
-                        <h3>Tokenization Results:</h3>
-                        <div>
-                            <h4>Sentences:</h4>
-                            <ul>
-                                {tokens.sentences.map((sentence, index) => (
-                                    <li key={index}>{sentence}</li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div>
-                            <h4>Words:</h4>
-                            <ul>
-                                {tokens.words.map((word, index) => (
-                                    <li key={index}>{word}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                )}
+    {tokens && (
+  <div>
+    <h2>Predicted Author: {tokens.label}</h2>
+    <h3>Probabilities:</h3>
+    <ul>
+      {Object.entries(tokens.probabilities).map(([author, prob]) => (
+        <li key={author}>
+          {author}: {(prob * 100).toFixed(2)}%
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
             </div>
         </div>
     );

@@ -141,5 +141,8 @@ def file_analysis(text):
     except Exception as e:
         results.append(f"שגיאה ב-count_personifications: {e}")
 
+    results.append("author: unknown")
+    results.append("text: unknown")
+
     results.append([cnt_lines, clean_txt, tok, word_statistics, named_entities, words_per_sentence, average_word_count, std_dev_words_per_sentence, num_words, word_count, word_frequencies, avg_word_length, sentence_types, word_frequencies, count_personification])
     return results

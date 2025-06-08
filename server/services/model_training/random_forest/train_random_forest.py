@@ -60,14 +60,3 @@ def train_author_classifier(csv_paths: dict, model_output_path: str = 'author_id
     evaluate_model_performance(model, X_train, y_train, X_test, y_test)
     # שמירת המודל
     save_trained_model(model, model_output_path)
-
-
-# הרצה בפועל עם קבצי CSV
-csv_files = {
-    'Charles Dickens': 'data/Charles Dickens.csv',
-    'H. G. Wells': 'data/H. G. Wells.csv',
-    'Jane Austen': 'data/Jane Austen.csv',
-    'Mark Twain': 'data/Mark Twain.csv'
-}
-
-train_author_classifier(csv_files)

@@ -26,12 +26,12 @@ def remove_chapter_header(text, chapter_regex):
         return '\n'.join(lines[1:]).strip()
     return text.strip()
 
-def split_text_into_chapters(pdf_file_path):
-    text = extract_text_from_pdf(pdf_file_path)
+def split_text_into_chapters(text):
+    
     chapter_regex = get_chapter_regex()
 
     if not text:
-        print(f"Unable to extract text from {pdf_file_path}")
+        print(f"No text was received for splitting into chapters.")
         return []
 
     matches = list(chapter_regex.finditer(text))

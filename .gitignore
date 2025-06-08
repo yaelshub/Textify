@@ -5,3 +5,5 @@ server/dal/textData/*
 *.csv
 *.pyc
 __pycache__/
+*.json
+server/services/model_training/BertModel/model.safetensors

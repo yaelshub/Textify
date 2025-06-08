@@ -1,6 +1,6 @@
-from file_processor import get_pdf_files_from_directory, process_file
-from save_feature_data_to_csv import save_feature_data_to_csv 
-from build_csv_headers import build_csv_headers   
+from server.services.csv_manager.file_processor import get_pdf_files_from_directory, process_file
+from server.services.csv_manager.save_feature_data_to_csv import save_feature_data_to_csv 
+from server.services.csv_manager.build_csv_headers import build_csv_headers   
 import os
 
 

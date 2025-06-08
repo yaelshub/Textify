@@ -2,8 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask import Flask
 import json, os
-from controllers.auth_controller import auth_bp
-from controllers.text_controller import text_bp
+from server.controllers.auth_controller import auth_bp
+from server.controllers.text_controller import text_bp
 import os
 import runpy
 
@@ -61,23 +61,6 @@ def login_user():
             return jsonify({"message": "User found"}), 200
 
     return jsonify({"error": "user not found"}), 404
-
-@app.route("/logout", methods=["POST"])
-def logout():
-    data = request.get_json()
-    name = data.get("name")
-
-    users_file = "users.json"
-    if os.path.exists(users_file):
-        with open(users_file, "r") as f:
-            users = json.load(f)
-
-        users = [user for user in users if user["name"] != name]
-
-        with open(users_file, "w") as f:
-            json.dump(users, f, indent=2)
-
-    return jsonify({"message": f"{name} removed"}), 200
 
 
 
