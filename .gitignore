@@ -7,3 +7,4 @@ server/dal/textData/*
 __pycache__/
 *.json
 server/services/model_training/BertModel/model.safetensors
+node_modules/
