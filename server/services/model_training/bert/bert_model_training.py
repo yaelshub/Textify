@@ -73,7 +73,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 texts = dfds['text']
 labels = dfds['author']
 
-# המרת תגיות לערכים מספריים
+#Author names are converted to numbers.
 label_encoder = LabelEncoder()
 labels_encoded = label_encoder.fit_transform(labels)
 
@@ -87,12 +87,12 @@ tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertForSequenceClassification.from_pretrained('bert-base-uncased',
                                                             num_labels=len(set(labels_encoded)))
 model.to(device)
-# המרת הטקסטים לפורמט המתאים
+# All text is converted to a list of numeric identifiers – this is the necessary step before sending text to the model.
 def tokenize_function(examples):
      return tokenizer(examples["text"], padding="max_length", truncation=True, max_length=500)
 # יצירת DataFrame
 df = pd.DataFrame({'text': texts, 'label': labels_encoded})
-# חלוקת הדאטה עם stratify באמצעות sklearn
+# The data is divided into 80% for training, 20% for testing.
 train_texts, test_texts, train_labels, test_labels = train_test_split(
     df['text'], df['label'], test_size=0.2, stratify=df['label'], random_state=42)
 # יצירת DataFrame מחדש לכל סט
@@ -110,9 +110,9 @@ loss_values = []
 
 training_args = TrainingArguments(
     output_dir="./results",
-    #evaluation_strategy="epoch",  # חישוב הפסד בכל epoch
     learning_rate=2e-5,
     num_train_epochs=4,
+    #To prevent overfitting
     weight_decay=0.01,
     logging_dir='./logs',
     logging_steps=10,
@@ -120,7 +120,7 @@ training_args = TrainingArguments(
     fp16=False,
     dataloader_num_workers=4,
     report_to="none",
-    prediction_loss_only=False  # וודא שחישוב הפסד מתבצע בהערכה
+    prediction_loss_only=False  
 )
 # שימוש ב-Trainer לאימון המודל
 trainer = Trainer(
@@ -128,7 +128,7 @@ trainer = Trainer(
     args=training_args,
     train_dataset=tokenized_train,
     eval_dataset=tokenized_test,
-    compute_metrics=compute_metrics,  # אם יש לך מתודולוגיה לחישוב מדדים
+    compute_metrics=compute_metrics,  
 )
 # אימון המודל עם מעקב אחרי איבוד (loss)
 for epoch in range(int(training_args.num_train_epochs)):
@@ -138,15 +138,19 @@ for epoch in range(int(training_args.num_train_epochs)):
     current_loss = train_results.metrics['train_loss']
     loss_values.append(current_loss)
 
+#The model is run on the test set, and returns results such as accuracy and loss.
 results = trainer.evaluate()  
 print("Evaluation results:", results)
+
 # חיזוי התוויות על סט הבדיקה
 predictions = trainer.predict(tokenized_test)
-# הוצאת התוויות הצפויות
+
+# spending the expected labels
 y_pred = predictions.predictions.argmax(axis=-1)
 y_true = predictions.label_ids
+#Converts the numbers back to the names of the authors
 y_pred_original = label_encoder.inverse_transform(y_pred)
-    # אותו הדבר עבור Y_test אם הוא מקודד
+# 
 Y_test_original = label_encoder.inverse_transform(y_true)
 y_pred = y_pred_original
 y_true = Y_test_original

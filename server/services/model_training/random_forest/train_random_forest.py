@@ -2,6 +2,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 import joblib
 
 # טעינת קבצים,ואיחוד לטבלה אחת 
@@ -56,7 +58,24 @@ def train_author_classifier(csv_paths: dict, model_output_path: str = 'author_id
     X_train, X_test, y_train, y_test = split_train_test(X, y)
     # אימון המודל
     model = train_random_forest_classifier(X_train, y_train)
+    model.fit(X_train, y_train)
+    # ניבוי
+    y_pred = model.predict(X_test)
+
     # הערכת ביצועים
     evaluate_model_performance(model, X_train, y_train, X_test, y_test)
     # שמירת המודל
     save_trained_model(model, model_output_path)
+    
+    # דוח סיווג
+    print("=== Classification Report ===")
+    print(classification_report(y_test, y_pred))
+
+    # מטריצת בלבול
+    print("=== Confusion Matrix ===")
+    cm = confusion_matrix(y_test, y_pred, labels=model.classes_)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=model.classes_)
+    disp.plot(cmap=plt.cm.Blues)
+    plt.show()
+
+   

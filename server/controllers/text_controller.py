@@ -16,15 +16,18 @@ def collect_data():
         return {"error": "No file selected"}, 400
     
     try:
+        UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # יצירה אם לא קיימת
+
         filename = secure_filename(file.filename)
-        temp_path = os.path.join("/tmp", filename)  
-        
-        file.save(temp_path)  # שמירה פיזית של הקובץ
+        temp_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(temp_path)
 
         # עכשיו אפשר לשלוח את הנתיב לפונקציה שלך
         text = extract_text_from_pdf(temp_path)
         os.remove(temp_path)
         predicted_label, prob_dict = analyze_text(text, "D:/Textify/server/services/model_training/BertModel")
+        prob_dict = {k: float(v) for k, v in prob_dict.items()}
 
         return jsonify({
             "label": predicted_label,

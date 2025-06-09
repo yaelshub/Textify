@@ -24,15 +24,7 @@ export default function Text() {
                     const response = await axios.post("http://localhost:5000/text/collect_data", formData);
 
                     setTokens(response.data);
-                    setTimeout(() => {
-                        alert(`
-                        Results of your text analysis:
-                        30% match with Esther Quinn's writing style.
-                        90% match with Mia Keenan's writing style.
-                        Important to know: Stylometry can only offer a statistical probability...
-                        `);
-                        setIsLoading(false);    
-                    }, 3000);
+                    setIsLoading(false);
                 } catch (error) {
                     alert("Error analyzing the file.");
                     setIsLoading(false);
