@@ -3,10 +3,13 @@ import fitz
 from pdfminer.high_level import extract_text
 
 def extract_text_from_pdf(pdf_path):
-    doc = fitz.open(pdf_path)
-    full_text = ""
-    for page in doc:
-        full_text += page.get_text("text") + "\n"
+    try:
+        doc = fitz.open(pdf_path)
+        full_text = ""
+        for page in doc:
+            full_text += page.get_text("text") + "\n"
+    except Exception as e:
+        print(f"Error reading PDF: {e}")
     return full_text
 
 def get_chapter_regex():
@@ -30,28 +33,26 @@ def split_text_into_chapters(text):
     
     chapter_regex = get_chapter_regex()
 
-    if not text:
-        print(f"No text was received for splitting into chapters.")
-        return []
+    chapters = []
 
-    matches = list(chapter_regex.finditer(text))
+    if text:
+        matches = list(chapter_regex.finditer(text))
 
-    if matches:
-        chapters = []
-        for i in range(len(matches)):
-            start = matches[i].start()
-            end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
-            chapter_text = text[start:end].strip()
-            cleaned_text = remove_chapter_header(chapter_text, chapter_regex)
-            chapters.append(cleaned_text)
-        return chapters
-    else:
-        length = len(text)
-        segment_size = length // 10
-        chapters = []
-        for i in range(10):
-            start = i * segment_size
-            end = (i + 1) * segment_size if i < 9 else length
-            part_text = text[start:end].strip()
-            chapters.append(part_text)
-        return chapters
+        if matches:
+            for i in range(len(matches)):
+                start = matches[i].start()
+                end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+                chapter_text = text[start:end].strip()
+                cleaned_text = remove_chapter_header(chapter_text, chapter_regex)
+                chapters.append(cleaned_text)
+
+        else:
+            length = len(text)
+            segment_size = length // 10
+            for i in range(10):
+                start = i * segment_size
+                end = (i + 1) * segment_size if i < 9 else length
+                part_text = text[start:end].strip()
+                chapters.append(part_text)
+
+    return chapters

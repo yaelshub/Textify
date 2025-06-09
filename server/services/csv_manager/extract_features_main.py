@@ -8,5 +8,3 @@ def main():
         except Exception as e:
             print(f"Error processing author {author}: {e}")
     print("Feature extraction completed!")
-
-main()
