@@ -46,20 +46,3 @@ def classify_sentence_type(sentences):
         "percentages": percentages,
         "most_frequent_type": most_common
     }
-
-
-if __name__ == "__main__":
-    test_sentences = [
-        "I went to the store.",
-        "I wanted to go to the store, but it was closed.",
-        "Although I was tired, I finished my homework before going to bed.",
-        "The sun was shining.",
-        "She ran quickly, and he followed slowly.",
-        "Because it was raining, we stayed inside and watched a movie."
-    ]
-
-    result = classify_sentence_type(test_sentences)
-
-    print("Counts:", result["counts"])
-    print("Percentages:", result["percentages"])
-    print("Most Frequent Type:", result["most_frequent_type"])

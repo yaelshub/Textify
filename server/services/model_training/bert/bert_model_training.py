@@ -107,7 +107,7 @@ tokenized_test = test_dataset.map(tokenize_function, batched=True)
 # הגדרת רשימה לערכי האיבוד (loss)
 loss_values = []
 
-
+#training parameters
 training_args = TrainingArguments(
     output_dir="./results",
     learning_rate=2e-5,
@@ -128,7 +128,7 @@ trainer = Trainer(
     args=training_args,
     train_dataset=tokenized_train,
     eval_dataset=tokenized_test,
-    compute_metrics=compute_metrics,  
+    compute_metrics=compute_metrics
 )
 # אימון המודל עם מעקב אחרי איבוד (loss)
 for epoch in range(int(training_args.num_train_epochs)):
@@ -140,7 +140,6 @@ for epoch in range(int(training_args.num_train_epochs)):
 
 #The model is run on the test set, and returns results such as accuracy and loss.
 results = trainer.evaluate()  
-print("Evaluation results:", results)
 
 # חיזוי התוויות על סט הבדיקה
 predictions = trainer.predict(tokenized_test)
@@ -150,20 +149,23 @@ y_pred = predictions.predictions.argmax(axis=-1)
 y_true = predictions.label_ids
 #Converts the numbers back to the names of the authors
 y_pred_original = label_encoder.inverse_transform(y_pred)
-# 
 Y_test_original = label_encoder.inverse_transform(y_true)
 y_pred = y_pred_original
 y_true = Y_test_original
-# הדפסת Confusion Matrix
+
+
+# confusion matrix
 print("Confusion Matrix:")
 print(confusion_matrix(y_true, y_pred))
 show_confusin_matrix(y_true,y_pred)
-# הדפסת Classification Report
+
+# classification report
 target_names = label_encoder.classes_.astype(str)
 class_report = classification_report(y_true, y_pred, target_names=target_names)
 print("Classification Report:")
 print(class_report)
-# Plotting the loss values
+
+# loss values
 plt.figure(figsize=(10, 6))
 plt.plot(loss_values, label='Training Loss')
 plt.title('Training Loss Over Epochs')

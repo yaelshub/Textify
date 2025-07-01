@@ -4,15 +4,6 @@ import matplotlib.pyplot as plt
 from PyPDF2 import PdfReader
 from .extraction_and_cutting import extract_text_from_pdf
 
-def extract_text_from_pdf(file_stream):
-    try:
-        reader = PdfReader(file_stream)
-        text = ""
-        for page in reader.pages:
-            text += page.extract_text()
-    except Exception as e:
-        print("error reading the PDF:", e)
-    return text
 
 def count_lines(text):
     return len(text.splitlines())
@@ -49,5 +40,3 @@ def data_balance_and_pie_drawing():
     plt.title('Balanced data',pad=5)
     plt.axis('equal') 
     plt.show()
-
-

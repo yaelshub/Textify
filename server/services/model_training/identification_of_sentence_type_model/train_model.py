@@ -32,6 +32,3 @@ def identifying_sentence_type():
     # שמירת המודל והוקטורייזר
     joblib.dump(model, "identifying_sentence_type.pkl")
     joblib.dump(vectorizer, "vectorizer.pkl")
-    
-if __name__ == "__main__":
-    identifying_sentence_type()

@@ -26,42 +26,42 @@ else:
             with open(USERS_FILE, "w") as file:
                 json.dump([], file)
 
-@app.route("/register", methods=["POST"])
-def register_user():
-    data = request.json
-    if not all(key in data for key in ("fullName", "email")):
-        return jsonify({"error": "Missing data"}), 400
+# למחוק פונקציות כפולות
+# @app.route("/register", methods=["POST"])
+# def register_user():
+#     data = request.json
+#     if not all(key in data for key in ("fullName", "email")):
+#         return jsonify({"error": "Missing data"}), 400
 
-    # קריאת הנתונים הקיימים
-    with open(USERS_FILE, "r") as file:
-        users = json.load(file)
+#     # קריאת הנתונים הקיימים
+#     with open(USERS_FILE, "r") as file:
+#         users = json.load(file)
 
-    # הוספת משתמש חדש
-    users.append(data)
+#     # הוספת משתמש חדש
+#     users.append(data)
 
-    # שמירת הנתונים חזרה לקובץ
-    with open(USERS_FILE, "w") as file:
-        json.dump(users, file, indent=4)
+#     # שמירת הנתונים חזרה לקובץ
+#     with open(USERS_FILE, "w") as file:
+#         json.dump(users, file, indent=4)
 
-    return jsonify({"message": "User added successfully!"}), 201
+#     return jsonify({"message": "User added successfully!"}), 201
 
-@app.route("/login", methods=["POST"])
-def login_user():
-    data = request.json
-    if not all(key in data for key in ("fullName", "email")):
-        return jsonify({"error": "missing data"}), 400
+# @app.route("/login", methods=["POST"])
+# def login_user():
+#     data = request.json
+#     if not all(key in data for key in ("fullName", "email")):
+#         return jsonify({"error": "missing data"}), 400
 
-    # קריאת הנתונים הקיימים
-    with open(USERS_FILE, "r") as file:
-        users = json.load(file)
+#     # קריאת הנתונים הקיימים
+#     with open(USERS_FILE, "r") as file:
+#         users = json.load(file)
 
-    # check if user exists
-    for user in users:
-        if user.get("fullName") == data["fullName"] and user.get("email") == data["email"]:
-            return jsonify({"message": "User found"}), 200
+#     # check if user exists
+#     for user in users:
+#         if user.get("fullName") == data["fullName"] and user.get("email") == data["email"]:
+#             return jsonify({"message": "User found"}), 200
 
-    return jsonify({"error": "user not found"}), 404
-
+#     return jsonify({"error": "user not found"}), 404
 
 
 app.register_blueprint(auth_bp, url_prefix='/auth')

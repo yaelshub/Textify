@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
 from services.file_analysis.extraction_and_cutting import split_text_into_chapters
 import csv  
 
@@ -53,7 +52,6 @@ def process_authors_pdfs(base_path):
 
 def create_csv_file():
     base_path = r"D:\Textify\server\dal\textData"
-    print("starting to process the PDF files...")
     texts, authors = process_authors_pdfs(base_path)
     if not texts:
         print("no texts found for processing!")
@@ -71,11 +69,3 @@ def create_csv_file():
     output_file = 'texts_authors.csv'
     df.to_csv(output_file, index=False, encoding='utf-8', quoting=csv.QUOTE_MINIMAL)
     print(f"\n completed! file created{output_file}")
-    print(f"total segments: {len(df)}")
-    print(f"authors: {df['author'].unique()}")
-    print(f"distribution of sections by author:")
-    print(df['author'].value_counts())
-    df = pd.read_csv("texts_authors.csv", index_col=False)  
-    print(df)  
-if __name__ == "__main__":
-    create_csv_file()

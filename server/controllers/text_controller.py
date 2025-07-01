@@ -17,7 +17,7 @@ def collect_data():
     
     try:
         UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # יצירה אם לא קיימת
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
         filename = secure_filename(file.filename)
         temp_path = os.path.join(UPLOAD_FOLDER, filename)

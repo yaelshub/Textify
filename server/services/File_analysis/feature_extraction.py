@@ -114,7 +114,3 @@ def feature_extraction():
         except Exception as e:
             print(f"Error processing author {author}: {e}")
     print("Feature extraction completed!")
-
-
-if __name__ == "__main__":
-    feature_extraction()
