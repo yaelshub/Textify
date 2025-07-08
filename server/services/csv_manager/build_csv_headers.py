@@ -1,3 +1,4 @@
+#בניית עמודות הקובץ
 def build_csv_headers():
     csv_header = [
         "num_words", "entity_identification", "number_of_words_in_each_sentence",

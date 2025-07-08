@@ -11,20 +11,22 @@ def get_pdf_files_from_directory(author_path):
 # פונקציה שמבצעת את כל תהליך העיבוד לקובץ PDF אחד ומחזירה שורות מוכנות לכתיבה
 def process_file(file_path, author, full_header, indices_to_keep):
     rows = []
+    book_name = os.path.basename(file_path).replace('.pdf', '')
+
     full_text = extraction_and_cutting.extract_text_from_pdf(file_path)
     if full_text.strip():
         chapters = extraction_and_cutting.split_text_into_chapters(full_text)
         print(f"Split into {len(chapters)} chapters")
-        rows = extract_features_from_chapters(chapters, author, full_header, indices_to_keep)
+        rows = extract_features_from_chapters(chapters, author, full_header, indices_to_keep, book_name)
 
     return rows
 
-def extract_features_from_chapters(chapters, author, full_header, indices_to_keep):
+def extract_features_from_chapters(chapters, author, full_header, indices_to_keep, book_name):
     rows = []
     for i, chapter in enumerate(chapters):
         if chapter.strip():
             result = file_analysis1.file_analysis(chapter)
-            chapter_rows = format_row_for_csv(result, author, full_header, indices_to_keep, chapter)
+            chapter_rows = format_row_for_csv(result, author, full_header, indices_to_keep, chapter, book_name)
             if chapter_rows:
                 rows.extend(chapter_rows)
 

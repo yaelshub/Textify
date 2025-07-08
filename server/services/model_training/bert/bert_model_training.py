@@ -24,8 +24,8 @@ def compute_metrics(pred):
           'accuracy': acc,
           'f1': f1,
       }
-def show_confusin_matrix(y_test,y_pred):
 
+def show_confusin_matrix(y_test,y_pred):
         class_names =np.unique(y_test)  # Replace with your class names
         cm = confusion_matrix(y_test, y_pred)
         sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=class_names, yticklabels=class_names)
@@ -64,7 +64,6 @@ def plot_loss(train_losses,val_losses,k):
         plt.legend()
         plt.show()
 
-
 dataset = pd.read_csv(csv_file_path, encoding='utf-8',sep='§')
 dfds = pd.DataFrame(dataset)
 
@@ -82,7 +81,6 @@ class_weights = compute_class_weight('balanced', classes=np.unique(labels_encode
 class_weights = torch.tensor(class_weights, dtype=torch.float).to(device)
 
 # טעינת טוקנייזר ומודל BERT
-
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertForSequenceClassification.from_pretrained('bert-base-uncased',
                                                             num_labels=len(set(labels_encoded)))

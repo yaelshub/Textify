@@ -13,7 +13,7 @@ def process_author_pdfs(pdf_files, author_path,full_header, indices_to_keep, all
         file_path = os.path.join(author_path, filename)
         file_rows = process_file(file_path, author, full_header, indices_to_keep)
         all_rows.extend(file_rows)
-        return all_rows
+    return all_rows
 
 # פונקציה שמבצעת את כל תהליך הניתוח למחבר אחד
 def process_author(author, base_path):

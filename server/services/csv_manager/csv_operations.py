@@ -7,8 +7,8 @@ def save_feature_data_to_csv(rows, csv_header, output_file):
         writer.writerow(csv_header)
         writer.writerows(rows)
     print(f"Processed {len(rows)} rows")
-
-def format_row_for_csv(result_dict, author, full_header, indices_to_keep, chapter_text):
+    
+def format_row_for_csv(result_dict, author, full_header, indices_to_keep, chapter_text, book_name):
     try:
         row = {}
         for item in result_dict:
@@ -17,10 +17,11 @@ def format_row_for_csv(result_dict, author, full_header, indices_to_keep, chapte
                 row[key.strip()] = value.strip()
         row["author"] = author
         row["text"] = chapter_text 
+        row["book_name"] = book_name
 
         full_row = [row.get(col, "") for col in full_header]
         filtered_row = [full_row[i] for i in indices_to_keep]
     except Exception as e:
-        print("eroor {e}")
-
+        print(f"error {e}")
+        return []
     return [filtered_row]
