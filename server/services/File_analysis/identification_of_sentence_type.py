@@ -1,4 +1,5 @@
 import joblib
+#ספירה של כמה מופעים מכל סוג
 from collections import Counter
 import os
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "model_training"))
@@ -7,7 +8,7 @@ base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "model_
 sentence_model_path = os.path.join(base_dir, "identification_of_sentence_type_model", "identifying_sentence_type.pkl")
 sentence_vectorizer_path = os.path.join(base_dir, "identification_of_sentence_type_model", "vectorizer.pkl")
 
-# טעינה
+# טעינת המודל והוקטורייזר
 model = joblib.load(sentence_model_path)
 vectorizer = joblib.load(sentence_vectorizer_path)
 
@@ -21,28 +22,19 @@ label_mapping = {
 def classify_sentence_type(sentences):
     # וקטוריזציה של כל המשפטים
     sentence_vectors = vectorizer.transform(sentences)
-    
     # תחזית לכל המשפטים
     predictions = model.predict(sentence_vectors)
-
-    # מיפוי התחזיות לטקסט
+    # תרגום התחזיות לטקסט
     predicted_labels = [label_mapping[p] for p in predictions]
-
-    # ספירה
+    # ספירת הופעות של כל סוג משפט
     counts = Counter(predicted_labels)
     total = len(sentences)
-
     # חישוב אחוזים
     percentages = {}
     for label in label_mapping.values():
         percentage = round((counts[label] / total) * 100, 2)
-        percentages[label] = percentage
-        
-    # מציאת הסוג השולט
+        percentages[label] = percentage      
+    # מחלץ את הסוג שהופיע הכי הרבה פעמים ברשימת התחזיות.
     most_common = counts.most_common(1)[0][0]
 
-    return {
-        "counts": dict(counts),
-        "percentages": percentages,
-        "most_frequent_type": most_common
-    }
+    return most_common

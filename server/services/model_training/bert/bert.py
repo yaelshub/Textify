@@ -1,41 +1,44 @@
 import torch
+# softmax פונקציות מתמטיות כמו 
 import torch.nn.functional as F
 import numpy as np
+# ספרייה של HuggingFace מכילה את BERT
 from transformers import BertTokenizer, BertForSequenceClassification
 from sklearn.preprocessing import LabelEncoder
 
 def analyze_text(text, model_path):
+    #אם יש GPU פנוי – המודל ירוץ עליו, אחרת ירוץ על CPU.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     tokenizer = BertTokenizer.from_pretrained(model_path)
+    #סוג מיוחד של מודל BERT שיודע לעשות סיווג טקסטים
     model = BertForSequenceClassification.from_pretrained(model_path)
     model.to(device)
-    #Prediction mode, not training
+    #מצב חיזוי אמין ולא אקראי
     model.eval()
 
     label_encoder = LabelEncoder()
     #List of original author names
     label_encoder.classes_ = np.load(f"{model_path}/label_encoder_classes.npy", allow_pickle=True)
 
-    #Transform text into input that BERT understands
+    #לוקח את הטקסט ומפרק אותם ל־מספרים
     inputs = tokenizer(text, padding=True, truncation=True, max_length=500, return_tensors="pt")
+    #שולחת את הכל ל־GPU או CPU 
     inputs = {k: v.to(device) for k, v in inputs.items()}
 
-    #Prediction
-    # Canceling gradient calculation because we are not in training.
+#בלי חישוב גרדיאנטים, אנחנו בשלב חיזוי
     with torch.no_grad():
-        #Send the input to the model and receive the outputs.
+        #מכניס את הקלט למודל ומחזיר את התוצאה
         outputs = model(**inputs)
-    #The raw output
+    #ציון פנימי שמראה כמה המודל חושב על כל סופר
     logits = outputs.logits
-    #Converts logits to probabilities
+    # הופך את logits ל־הסתברויות בין 0 ל־1, שהסכום שלהן = 1
     probs = F.softmax(logits, dim=-1).cpu().numpy()[0]
-    #Selects the index with the highest probability
+    #מחזיר את ההסתברות הכי גבוהה ואז את האינדקס של המחבר הכי סביר.
     prediction = torch.argmax(logits, dim=-1).cpu().numpy()[0]
-    #Converts the predicted number back to a connector name.
+    #הופך את המספר לשם המחבר האמיתי
     predicted_label = label_encoder.inverse_transform([prediction])[0]
-
-    # Creates a dictionary where the keys are the names of the authors, and the values ​​are the probabilities for each of them
+    # בונה מילון עם שמות המחברים וההסתברויות שלהם
     label_probs = dict(zip(label_encoder.classes_, [round(p, 4) for p in probs]))
-    #Returns the name of the author that the model thinks is most appropriate and the dictionary of probabilities for each author.
+#מחזיר את השם הכי סביר ואת ההסתברויות של כולם
     return predicted_label, label_probs

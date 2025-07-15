@@ -29,6 +29,7 @@ def identifying_sentence_type():
     print("Accuracy:", accuracy)
     print("\nLabel distribution:\n", df["label"].value_counts())
 
-    # שמירת המודל והוקטורייזר
+    # שמירת המודל המאומן כאובייקט כפייתון 
     joblib.dump(model, "identifying_sentence_type.pkl")
+    #שמירת הוקטורייזר- הדרך בה נהפכו המשפטים למספרים.
     joblib.dump(vectorizer, "vectorizer.pkl")

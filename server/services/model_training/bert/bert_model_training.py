@@ -26,7 +26,7 @@ def compute_metrics(pred):
       }
 
 def show_confusin_matrix(y_test,y_pred):
-        class_names =np.unique(y_test)  # Replace with your class names
+        class_names =np.unique(y_test)  
         cm = confusion_matrix(y_test, y_pred)
         sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=class_names, yticklabels=class_names)
         plt.xlabel('Predicted')
@@ -35,7 +35,6 @@ def show_confusin_matrix(y_test,y_pred):
         plt.show()
 
 def show_plt(x1,x2,titlex1,titlex2,plot_title):
-        # Plot the average training and validation loss
         plt.figure(figsize=(10, 6))
         plt.plot(x1, label=titlex1)
         plt.plot(x2, label=titlex2)
@@ -47,14 +46,11 @@ def show_plt(x1,x2,titlex1,titlex2,plot_title):
         plt.show()
 
 def plot_loss(train_losses,val_losses,k):
-        # Plotting
         plt.figure(figsize=(12, 6))
 
-        # Plot train losses
         for i in range(k):
             plt.plot(train_losses[i], label=f'Train Loss Fold {i+1}')
 
-        # Plot validation losses
         for i in range(k):
             plt.plot(val_losses[i], label=f'Validation Loss Fold {i+1}', linestyle='--')
 
@@ -71,12 +67,10 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 texts = dfds['text']
 labels = dfds['author']
-
-#Author names are converted to numbers.
+# הופכת את שמות המחברים למספרים
 label_encoder = LabelEncoder()
 labels_encoded = label_encoder.fit_transform(labels)
-
-# חישוב Class Weights
+#ם יש מחבר נדיר ומחבר שכיח יש לאזן את התרומה של כל מחבר כך שהמודל לא יטה כל הזמן למחבר הכי נפוץ.
 class_weights = compute_class_weight('balanced', classes=np.unique(labels_encoded), y=labels_encoded)
 class_weights = torch.tensor(class_weights, dtype=torch.float).to(device)
 
@@ -85,12 +79,11 @@ tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertForSequenceClassification.from_pretrained('bert-base-uncased',
                                                             num_labels=len(set(labels_encoded)))
 model.to(device)
-# All text is converted to a list of numeric identifiers – this is the necessary step before sending text to the model.
 def tokenize_function(examples):
      return tokenizer(examples["text"], padding="max_length", truncation=True, max_length=500)
 # יצירת DataFrame
 df = pd.DataFrame({'text': texts, 'label': labels_encoded})
-# The data is divided into 80% for training, 20% for testing.
+# ם יש מחבר נדיר ומחבר שכיח – את מאזנת את התרומה של כל מחבר כך שהמודל לא יטה כל הזמן למחבר הכי נפוץ.
 train_texts, test_texts, train_labels, test_labels = train_test_split(
     df['text'], df['label'], test_size=0.2, stratify=df['label'], random_state=42)
 # יצירת DataFrame מחדש לכל סט
@@ -99,15 +92,16 @@ test_df = pd.DataFrame({'text': test_texts, 'label': test_labels})
 # המרת ה-DataFrames ל-Hugging Face Datasets
 train_dataset = Dataset.from_pandas(train_df)
 test_dataset = Dataset.from_pandas(test_df)
-# Tokenization
+#מבצעת טוקניזציה על כל הדאטה 
 tokenized_train = train_dataset.map(tokenize_function, batched=True)
 tokenized_test = test_dataset.map(tokenize_function, batched=True)
 # הגדרת רשימה לערכי האיבוד (loss)
 loss_values = []
 
-#training parameters
+#מחזירה מדדים חשובים כמו דיוק (accuracy) וממוצע F1.
 training_args = TrainingArguments(
     output_dir="./results",
+    #2e-5 = 0.00002
     learning_rate=2e-5,
     num_train_epochs=4,
     #To prevent overfitting
@@ -153,14 +147,12 @@ y_true = Y_test_original
 
 
 # confusion matrix
-print("Confusion Matrix:")
 print(confusion_matrix(y_true, y_pred))
 show_confusin_matrix(y_true,y_pred)
 
 # classification report
 target_names = label_encoder.classes_.astype(str)
 class_report = classification_report(y_true, y_pred, target_names=target_names)
-print("Classification Report:")
 print(class_report)
 
 # loss values

@@ -25,12 +25,8 @@ def load_and_label_data(csv_paths: dict) -> pd.DataFrame:
 #     return train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
 
 
-# 🎯 הוסף את הפונקציה החדשה
+
 def split_train_test_stratified_books(X, y, book_names, test_size=0.2, random_state=42):
-    """פיצול שמבטיח שכל מחבר יהיה גם באימון וגם בבדיקה"""
-    
-    print("=== פיצול מבוסס ספרים עם שימור מחברים ===")
-    
     # יצירת טבלה עם מידע על ספרים
     df_books = pd.DataFrame({
         'author': y,
@@ -39,7 +35,6 @@ def split_train_test_stratified_books(X, y, book_names, test_size=0.2, random_st
     
     # ספירת ספרים לכל מחבר
     books_per_author = df_books.groupby('author')['book_name'].count()
-    print("ספרים לכל מחבר:")
     for author, count in books_per_author.items():
         print(f"  {author}: {count} ספרים")
     
@@ -70,43 +65,15 @@ def split_train_test_stratified_books(X, y, book_names, test_size=0.2, random_st
     # פיצול הנתונים
     X_train, X_test = X[train_mask], X[test_mask]
     y_train, y_test = y[train_mask], y[test_mask]
-    
-    # בדיקות בטיחות
-    print("\n=== בדיקת הפיצול ===")
-    print(f"ספרי אימון: {sorted(train_books)}")
-    print(f"ספרי בדיקה: {sorted(test_books)}")
-    
-    # ודא שכל מחבר מיוצג בשתי הקבוצות
-    authors_train = set(y_train)
-    authors_test = set(y_test)
-    
-    if authors_train == authors_test == set(y.unique()):
-        print("✅ כל המחברים מיוצגים גם באימון וגם בבדיקה!")
-    else:
-        print("⚠️ בעיה: לא כל המחברים מיוצגים בשתי הקבוצות")
-        print(f"באימון: {authors_train}")
-        print(f"בבדיקה: {authors_test}")
-    
-    # ודא שאין חפיפת ספרים
-    overlap = set(train_books) & set(test_books)
-    if overlap:
-        print(f"⚠️ חפיפת ספרים: {overlap}")
-    else:
-        print("✅ אין חפיפת ספרים!")
-    
-    print(f"\nתוצאה סופית:")
-    print(f"אימון: {len(X_train)} פרקים מ-{len(train_books)} ספרים")
-    print(f"בדיקה: {len(X_test)} פרקים מ-{len(test_books)} ספרים")
-    
     return X_train, X_test, y_train, y_test
 
 def train_catboost_classifier(X_train, y_train, random_state=42):
     model = CatBoostClassifier(
-        iterations=100,
-        learning_rate=0.1,
-        depth=6,
+        iterations=100, # מספר העצים הכולל
+        learning_rate=0.1, # כמה כל עץ "תורם"
+        depth=6, # עומק מקסימלי לכל עץ
         random_seed=random_state,
-        verbose=0  # מונע הדפסות מיותרות
+        verbose=0  # מונע הדפסות בכל שלב
     )
     model.fit(X_train, y_train)
     return model
@@ -118,9 +85,7 @@ def evaluate_model_performance(model, X_train, y_train, X_test, y_test):
 
     y_pred = model.predict(X_test)
 
-    print("=== Confusion Matrix ===")
     print(confusion_matrix(y_test, y_pred))
-    print("\n=== Classification Report ===")
     print(classification_report(y_test, y_pred))
 
 # שמירת המודל המאומן
@@ -133,19 +98,18 @@ def train_author_classifier_catboost(csv_paths: dict, model_output_path: str = '
      # טעינת נתונים
     data = load_and_label_data(csv_paths)
     
-    # 🎯 בדיקה שיש עמודת book
+    #  בדיקה שיש עמודת book
     book_col = 'book' if 'book' in data.columns else 'book_name'
     if book_col not in data.columns:
-        print("⚠️ שגיאה: חסרה עמודת book או book_name!")
         print("עמודות קיימות:", data.columns.tolist())
         return
     
-    # 🎯 פיצול נכון - הסר author ו-book
+    #  פיצול נכון - הסר author ו-book
     X = data.drop(['author', book_col], axis=1)
     y = data['author']
     book_names = data[book_col]
     
-    # 🎯 השתמש בפיצול החדש
+    # השתמש בפיצול החדש
     X_train, X_test, y_train, y_test = split_train_test_stratified_books(X, y, book_names)
     
     # אימון המודל

@@ -1,7 +1,10 @@
+#ניתוח שפה טבעית (NLP)
 import spacy
+#עבודה עם ביטויים רגולריים
 import re
+#חישובים סטטיסטיים
 import numpy as np
-# from .tokenization import tokenize_text
+# ספירה מהירה של מופעים של מילים.
 from collections import Counter
 
 nlp = spacy.load("en_core_web_sm")
@@ -38,6 +41,7 @@ def entity_identification(text):
 #מספר המילים שבכל משפט
 def number_of_words_in_each_sentence(text):
     sentences = re.split(r'[.!?]', text)
+    #ניקוי רווחים והסרת מחרוזות ריקות
     sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
     words_per_sentence = [len(re.findall(r'\b\w+\b', sentence)) for sentence in sentences]
     return words_per_sentence
@@ -50,10 +54,8 @@ def calculate_average_word_count(words_per_sentence):
 #סטיית תקן של  כמות המילים במשפט
 def Standard_deviation_of_the_number_of_words_in_a_sentence(words_per_sentence):
     if not words_per_sentence:
-        print("Warning: Empty list provided for words_per_sentence.")
         return 0
     if len(words_per_sentence) == 1:
-        print("Warning: Only one sentence, standard deviation is 0 by definition.")
         return 0
     return np.std(words_per_sentence)
 
@@ -71,6 +73,7 @@ def number_of_times_a_word_appears_in_text(tok):
 def frequency_of_each_word(word_count,num_words):
     word_freq={}
     for word in word_count:
+     #כמה פעמים המילה הזאת הופיעה בטקסט לחלק כל המילים בטקסט.
      word_freq[word]=word_count[word]/num_words
     return word_freq
 

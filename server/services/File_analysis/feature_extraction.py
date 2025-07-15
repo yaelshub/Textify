@@ -21,11 +21,11 @@ HEADER = [
 ]
 
 EXPECTED_LEN = len(HEADER) - 3       
-# אינדקסים של הפריטים שרוצים להסיר מה-file_analysis (clean_text=1, tokenize_text=2)
+# אינדקסים של מאפיינים צריך להסיר מהפלט
 DROP_IDX = {1, 2}
 
+#תפקידה להסיר את התווית מההתחלה ולהחזיר רק את הערך עצמו
 def strip_label(x):
-#מסיר את התווית מהערך - מחזיר רק את הערך עצמו
     if isinstance(x, str):
         if ": " in x:
             return x.split(": ", 1)[1]
@@ -33,12 +33,12 @@ def strip_label(x):
             return x.split(":", 1)[1].strip()
     return x
 
+ #עיבוד פרק יחיד וניתוחו ומחזירה שורת CSV
 def process_chapter(chapter, filename, chap_idx, author):
- #עיבוד פרק יחיד והמרה לשורת CSV
     feat = file_analysis(chapter)
     
     if isinstance(feat, list):
-        # הסרת הרשימה האחרונה אם קיימת (לא נחוצה)
+        # הסרת הרשימה האחרונה אם קיימת
         if len(feat) > 0 and isinstance(feat[-1], list):
             feat = feat[:-1]
         
@@ -51,7 +51,7 @@ def process_chapter(chapter, filename, chap_idx, author):
             cleaned_value = strip_label(item)
             cleaned_feat.append(cleaned_value)
         
-        # בדיקה שהאורך נכון
+        # מחזיר שורת CSV מלאה רק אם האורך תקין: המאפיינים + שם קובץ + מספר פרק + סופר.
         if len(cleaned_feat) == EXPECTED_LEN:
             return cleaned_feat + [filename, chap_idx + 1, author]
         else:
@@ -60,37 +60,30 @@ def process_chapter(chapter, filename, chap_idx, author):
     print(f"Format mismatch in {filename} chap {chap_idx+1}")
     return None
 
-def process_author(author):
 #עיבוד כל הקבצים של סופר אחד
-    print(f"Processing {author}")
+def process_author(author):
     author_dir = os.path.join(BASE_PATH, author)
     
     if not os.path.exists(author_dir):
-        print(f"Directory not found: {author_dir}")
         return
     
     pdfs = [f for f in os.listdir(author_dir) if f.endswith(".pdf")]
-    
     if not pdfs:
-        print(f"No PDF files found in {author_dir}")
         return
     
     rows = []
     
     for pdf in pdfs:
-        print(f"Processing {pdf}")
         try:
             with open(os.path.join(author_dir, pdf), "rb") as fh:
                 text = extract_text_from_pdf(io.BytesIO(fh.read()))
             
             chapters = split_text_into_chapters(text)
-            print(f"Found {len(chapters)} chapters in {pdf}")
             
             for i, chap in enumerate(chapters):
                 row = process_chapter(chap, pdf, i, author)
                 if row:
-                    rows.append(row)
-                    
+                    rows.append(row)  
         except Exception as e:
             print(f"Error processing {pdf}: {e}")
     
@@ -102,15 +95,12 @@ def process_author(author):
             writer.writerow(HEADER)
             # כתיבת הנתונים 
             writer.writerows(rows)
-        print(f"Saved {len(rows)} rows → {out_csv}")
-    else:
-        print("No valid rows – nothing saved")
 
-def feature_extraction():
+
 #פונקציה ראשית להפקת מאפיינים
+def feature_extraction():
     for author in AUTHORS:
         try:
             process_author(author)
         except Exception as e:
             print(f"Error processing author {author}: {e}")
-    print("Feature extraction completed!")
